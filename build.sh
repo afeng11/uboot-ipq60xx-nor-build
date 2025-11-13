@@ -1,27 +1,62 @@
 #!/bin/sh
 
 # 获取脚本所在目录的绝对路径
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ -n "$GITHUB_WORKSPACE" ]; then
+    # 在 GitHub Actions 环境中
+    SCRIPT_DIR="$GITHUB_WORKSPACE"
+    echo "检测到 GitHub Actions 环境，使用工作目录: $SCRIPT_DIR"
+else
+    # 本地环境
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+    echo "本地环境，使用脚本目录: $SCRIPT_DIR"
+fi
 
-# 清理函数 - 删除核心 u-boot 文件
-clean_build() {
-    # 确保在脚本目录下执行
-    cd "$SCRIPT_DIR"
+# 验证关键目录是否存在
+if [ ! -d "${SCRIPT_DIR}/u-boot-2016" ]; then
+    echo "错误: u-boot-2016 目录不存在"
+    echo "期望路径: ${SCRIPT_DIR}/u-boot-2016"
+    echo "当前目录内容:"
+    ls -la "$SCRIPT_DIR"
+    exit 1
+fi
 
-    # 删除编译生成的板卡文件
-    for target in re-ss-01 re-cs-02 re-cs-07 nn6000-v1 nn6000-v2 ax5-jdcloud; do
-        if [ -f "uboot-ipq60xx-emmc-${target}-*.bin" ]; then
-            rm "uboot-ipq60xx-emmc-${target}-*.bin"
-        fi
-    done
+if [ ! -d "${SCRIPT_DIR}/staging_dir" ]; then
+    echo "错误: staging_dir 目录不存在"
+    echo "期望路径: ${SCRIPT_DIR}/../staging_dir"
+	echo "当前目录内容:"
+    ls -la "$SCRIPT_DIR"
+    exit 1
+fi
+
+# 设置编译时间信息
+setup_build_info() {
+    # 使用同一时间戳确保完全一致
+    local unified_time=$(TZ=UTC-8 date +"%s")
+
+    export COMPILE_DATE=$(TZ=UTC-8 date -d "@$unified_time" +"%y.%m.%d-%H.%M.%S")
+    export UBOOT_VERSION=$(TZ=UTC-8 date -d "@$unified_time" +"%y%m%d.%H%M%S")
+
+    echo "设置版本号: $UBOOT_VERSION"
+    echo "设置编译时间: $COMPILE_DATE"
 }
 
-# 深度清理函数 - 清理所有生成文件
-clean_all_build() {
+# 设置编译环境函数
+setup_build_env() {
+    echo "设置编译环境"
+    export ARCH=arm
+    export TARGETCC=arm-openwrt-linux-gcc
+    export CROSS_COMPILE=arm-openwrt-linux-
+    export STAGING_DIR="${SCRIPT_DIR}/staging_dir"
+    export HOSTLDFLAGS="-L${STAGING_DIR}/usr/lib -znow -zrelro -pie"
+    export PATH="${STAGING_DIR}/toolchain-arm_cortex-a7_gcc-5.2.0_musl-1.1.16_eabi/bin:$PATH"
+}
+
+# 清理编译过程中产生的缓存
+clean_cache() {
     # 确保在脚本目录下执行
     cd "$SCRIPT_DIR"
 
-    echo "根据 .gitignore 规则深度清理"
+    # 根据 .gitignore 规则深度清理
     if [ -d "${SCRIPT_DIR}/u-boot-2016" ]; then
         cd "${SCRIPT_DIR}/u-boot-2016"
         find . -type f \
@@ -58,8 +93,8 @@ clean_all_build() {
                 -name 'GTAGS' \
             \) -delete
         rm -rf \
-            .stgit-edit.txt \
-            .gdb_history \
+            ../.stgit-edit.txt \
+            ../.gdb_history \
             arch/arm/dts/dtbtable.S \
             httpd/fsdata.c \
             scripts_mbn/mbn_tools.pyc \
@@ -72,21 +107,22 @@ clean_all_build() {
     fi
 }
 
-# 编译函数（包含清理）
-compile_target_with_clean() {
+# 编译函数（先清理后编译）
+compile_target_after_cache_clean() {
     local target_name=$1
     local config_name=$2
 
     echo "编译目标: $target_name"
 
-    # 编译前执行深度清理
-    echo "编译前清理构建环境..."
-    clean_all_build
+    # 清理编译缓存
+    echo "清理编译缓存"
+    clean_cache
 
     # 设置编译环境
-    echo "设置编译环境"
+    setup_build_env
+
+    echo "进入编译根目录"
     cd "${SCRIPT_DIR}/u-boot-2016/"
-    . "${SCRIPT_DIR}/env.sh"
 
     echo "构建配置: $config_name"
     make ${config_name}_defconfig
@@ -103,13 +139,43 @@ compile_target_with_clean() {
     echo "转换 elf 到 mbn"
     python3 scripts_mbn/elftombn.py -f ./u-boot -o ./u-boot.mbn -v 6
 
-    echo "复制 u-boot.mbn 到根目录"
-    mv ./u-boot.mbn "${SCRIPT_DIR}/uboot-ipq60xx-emmc-${target_name}-"$UBOOT_VERSION".bin"
+    echo "移动 u-boot.mbn 到根目录并重命名为 uboot-ipq60xx-emmc-${target_name}-${UBOOT_VERSION}.bin"
+    mv ./u-boot.mbn "${SCRIPT_DIR}/uboot-ipq60xx-emmc-${target_name}-${UBOOT_VERSION}.bin"
 
     echo "编译完成: $target_name"
+    echo " "
 
     # 返回脚本目录
     cd "$SCRIPT_DIR"
+}
+
+# 编译单个目标（包含版本设置）
+compile_single_target() {
+    local target_name=$1
+    local config_name=$2
+
+    setup_build_info
+    compile_target_after_cache_clean "$target_name" "$config_name"
+}
+
+# 编译所有目标
+compile_all_targets() {
+    echo "编译所有支持的板卡..."
+
+    # 一次性设置版本号，确保所有板卡版本一致
+    setup_build_info
+
+    echo " "
+
+    # 依次编译所有板卡
+    compile_target_after_cache_clean "jdcloud_re-cs-02"  "ipq6018_jdcloud_re_cs_02"
+    compile_target_after_cache_clean "jdcloud_re-cs-07"  "ipq6018_jdcloud_re_cs_07"
+    compile_target_after_cache_clean "jdcloud_re-ss-01"  "ipq6018_jdcloud_re_ss_01"
+    compile_target_after_cache_clean "link_nn6000-v1"    "ipq6018_link_nn6000_v1"
+    compile_target_after_cache_clean "link_nn6000-v2"    "ipq6018_link_nn6000_v2"
+    compile_target_after_cache_clean "redmi_ax5-jdcloud" "ipq6018_redmi_ax5_jdcloud"
+
+    echo "所有板卡编译完成!"
 }
 
 # 帮助文档函数
@@ -117,71 +183,56 @@ show_help() {
     echo "用法: $0 [选项]"
     echo ""
     echo "选项:"
-    echo "  clean                   删除核心 u-boot 文件"
-    echo "  clean_all               深度清理所有生成文件"
-    echo "  build_re-ss-01          编译 JDCloud AX1800 Pro (Arthur)"
-    echo "  build_re-cs-02          编译 JDCloud AX6600 (Athena)"
-    echo "  build_re-cs-07          编译 JDCloud ER1"
-	echo "  build_nn6000-v1         编译 Link NN6000 V1"
-	echo "  build_nn6000-v2         编译 Link NN6000 V2"
-    echo "  build_ax5-jdcloud       编译 Redmi AX5 JDCloud"
-    echo "  build_all               编译所有支持的板卡"
-    echo "  help                    显示此帮助信息"
-    echo ""
-    echo "示例:"
-    echo "  $0 build_re-ss-01       编译 Arthur 板卡"
-    echo "  $0 build_all            编译所有板卡"
-    echo "  $0 clean                清理生成文件"
+    echo "  help                   显示此帮助信息"
+    echo "  setup_env              仅设置编译环境"
+    echo "  clean_cache            清理编译过程中产生的缓存"
+    echo "  build_re-cs-02         编译 JDCloud AX6600 (Athena)"
+    echo "  build_re-cs-07         编译 JDCloud ER1"
+    echo "  build_re-ss-01         编译 JDCloud AX1800 Pro (Arthur)"
+    echo "  build_nn6000-v1        编译 Link NN6000 V1"
+    echo "  build_nn6000-v2        编译 Link NN6000 V2"
+    echo "  build_ax5-jdcloud      编译 Redmi AX5 JDCloud"
+    echo "  build_all              编译所有支持的板卡"
 }
 
 # 主逻辑 - 使用 case 语句
 case "$1" in
-    "clean")
-        clean_build
-        echo "清理完成!"
+    "setup_env")
+        setup_build_env
+  		echo "编译环境设置完成"
         ;;
 
-    "clean_all")
-        clean_all_build
-        echo "深度清理完成!"
-        ;;
-
-    "build_re-ss-01")
-        compile_target_with_clean "re-ss-01" "ipq6018_jdcloud_re_ss_01"
+    "clean_cache")
+        clean_cache
+        echo "编译缓存清理完成!"
         ;;
 
     "build_re-cs-02")
-        compile_target_with_clean "re-cs-02" "ipq6018_jdcloud_re_cs_02"
+        compile_single_target "jdcloud_re-cs-02" "ipq6018_jdcloud_re_cs_02"
         ;;
 
     "build_re-cs-07")
-        compile_target_with_clean "re-cs-07" "ipq6018_jdcloud_re_cs_07"
+        compile_single_target "jdcloud_re-cs-07" "ipq6018_jdcloud_re_cs_07"
+        ;;
+
+    "build_re-ss-01")
+        compile_single_target "jdcloud_re-ss-01" "ipq6018_jdcloud_re_ss_01"
         ;;
 
     "build_nn6000-v1")
-        compile_target_with_clean "nn6000-v1" "ipq6018_link_nn6000_v1"
+        compile_single_target "link_nn6000-v1" "ipq6018_link_nn6000_v1"
         ;;
 
     "build_nn6000-v2")
-        compile_target_with_clean "nn6000-v2" "ipq6018_link_nn6000_v2"
+        compile_single_target "link_nn6000-v2" "ipq6018_link_nn6000_v2"
         ;;
 
     "build_ax5-jdcloud")
-        compile_target_with_clean "ax5-jdcloud" "ipq6018_redmi_ax5_jdcloud"
+        compile_single_target "redmi_ax5-jdcloud" "ipq6018_redmi_ax5_jdcloud"
         ;;
 
     "build_all")
-        echo "编译所有支持的板卡..."
-
-        # 依次编译所有板卡，每个板卡编译前都清理
-        compile_target_with_clean "re-ss-01" "ipq6018_jdcloud_re_ss_01"
-        compile_target_with_clean "re-cs-02" "ipq6018_jdcloud_re_cs_02"
-        compile_target_with_clean "re-cs-07" "ipq6018_jdcloud_re_cs_07"
-		compile_target_with_clean "nn6000-v1" "ipq6018_link_nn6000_v1"
-		compile_target_with_clean "nn6000-v2" "ipq6018_link_nn6000_v2"
-        compile_target_with_clean "ax5-jdcloud" "ipq6018_redmi_ax5_jdcloud"
-
-        echo "所有板卡编译完成!"
+        compile_all_targets
         ;;
 
     "help"|"")
@@ -192,12 +243,5 @@ case "$1" in
         echo "错误: 未知选项 '$1'"
         echo "使用 '$0 help' 查看可用选项"
         exit 1
-        ;;
-esac
-
-# 只有编译操作才显示完成消息
-case "$1" in
-    "build_re-ss-01"|"build_re-cs-02"|"build_re-cs-07"|"build_nn6000-v1"|"build_nn6000-v2"|"build_ax5-jdcloud"|"build_all")
-        echo "全部完成!"
         ;;
 esac
