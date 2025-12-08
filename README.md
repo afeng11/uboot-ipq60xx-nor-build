@@ -110,3 +110,37 @@ U-Boot 截图示例（[点击此处](./screenshots.md) 查看所有网页截图�
 U-Boot 下不区分 LAN / WAN，任意网口均可进入 Web 刷机界面。
 
 按住 RESET / WPS / SCREEN 键后上电，等待 LED 闪烁 5 次后即可进入 U-Boot Web 刷机界面。
+
+## 注意事项
+
+### bootipq 失败后执行 httpd 出错
+
+bootipq 失败后执行 httpd 会出现以下错误：
+
+```
+HTTP server is ready!
+
+Data will be downloaded at 0x50000000 in RAM
+Upgrade type: firmware
+Upload file size: 57282710 bytes
+Loading: #######################################
+         .......................................
+         #######################
+
+done!
+data abort
+pc : [<4a448310>]          lr : [<4a462c0f>]
+reloc pc : [<4a448310>]    lr : [<4a462c0f>]
+sp : 4a27f844  ip : 000031b5     fp : 00000a01
+r10: 4a487c5c  r9 : 4a27fea0     r8 : 4a487c74
+r7 : 4a487c6c  r6 : 0000d250     r5 : 4a48767e  r4 : 0000ba05
+r3 : 000005a6  r2 : 4a462c0f     r1 : 000005a6  r0 : 00000000
+Flags: nzCv  IRQs off  FIQs off  Mode SVC_32
+Resetting CPU ...
+```
+
+这是因为 bootipq 命令修改了运行环境，导致执行 httpd 命令刷写固件失败。
+
+若遇到 bootipq 失败的情况，请断电重启路由器以重置运行环境，在 bootipq 执行前按 RESET 键重新进入 Web 界面刷写固件，或者打断 U-Boot 自动启动流程后在串口控制台手动执行相关命令。
+
+bootipq 常见失败原因：U-Boot 无法正常读取 0:HLOS 分区；0:HLOS 分区中存储的不是正确的固件内核数据。
