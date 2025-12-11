@@ -134,8 +134,7 @@ clean_cache() {
 
     # 根据 .gitignore 规则深度清理
     if [ -d "${SCRIPT_DIR}/u-boot-2016" ]; then
-        cd "${SCRIPT_DIR}/u-boot-2016"
-        find . -type f \
+        find u-boot-2016/ -type f \
             \( \
                 -name '*.o' -o \
                 -name '*.o.*' -o \
@@ -169,16 +168,15 @@ clean_cache() {
                 -name 'GTAGS' \
             \) -delete
         rm -rf \
-            ../.stgit-edit.txt \
-            ../.gdb_history \
-            arch/arm/dts/dtbtable.S \
-            httpd/fsdata.c \
-            u-boot* \
-            .config \
-            include/config \
-            include/generated
-        # 返回脚本目录
-        cd "$SCRIPT_DIR"
+            .stgit-edit.txt \
+            .gdb_history \
+            u-boot-2016/.config \
+            u-boot-2016/.u-boot* \
+            u-boot-2016/arch/arm/dts/dtbtable.S \
+            u-boot-2016/httpd/fsdata.c \
+            u-boot-2016/include/config \
+            u-boot-2016/include/generated \
+            u-boot-2016/u-boot*
     fi
 }
 
