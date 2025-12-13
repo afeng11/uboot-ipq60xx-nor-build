@@ -1140,6 +1140,11 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_IPQ40XX_TB832         0x1010004
 #define MACH_TYPE_IPQ40XX_AP_DK04_1_C6  0x8010501
 
+#if defined(CONFIG_TARGET_IPQ6018_PHILIPS_LY1800) || defined(CONFIG_TARGET_IPQ6018_SY_Y6010)
+#define MACH_TYPE_IPQ6018_PHILIPS_LY1800 0x8030000
+#define MACH_TYPE_IPQ6018_SY_Y6010       0x8030200
+#endif
+
 #ifdef CONFIG_ARCH_EBSA110
 # ifdef machine_arch_type
 #  undef machine_arch_type

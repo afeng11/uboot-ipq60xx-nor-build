@@ -236,6 +236,27 @@ int config_select(unsigned int addr, char *rcmd, int rcmd_size)
 			 addr, dtb_config_name);
 		return 0;
 	}
+#ifdef CONFIG_TARGET_IPQ6018_PHILIPS_LY1800
+	else if (fit_conf_get_node((void *)addr, "config@cp03-c1") >= 0) {
+		snprintf(rcmd, rcmd_size, "bootm 0x%x#%s\n",
+			 addr, "config@cp03-c1");
+		return 0;
+	}
+#endif
+#ifdef CONFIG_TARGET_IPQ6018_SY_Y6010
+	else if (fit_conf_get_node((void *)addr, "config@cp01-c1") >= 0) {
+		snprintf(rcmd, rcmd_size, "bootm 0x%x#%s\n",
+			 addr, "config@cp01-c1");
+		return 0;
+	}
+#endif
+#if defined(CONFIG_TARGET_IPQ6018_PHILIPS_LY1800) || defined(CONFIG_TARGET_IPQ6018_SY_Y6010)
+	else if (fit_conf_get_node((void *)addr, "config@cp03-c2") >= 0) {
+		snprintf(rcmd, rcmd_size, "bootm 0x%x#%s\n",
+			 addr, "config@cp03-c2");
+		return 0;
+	}
+#endif
 
 	printf("Config not availabale\n");
 	return -1;

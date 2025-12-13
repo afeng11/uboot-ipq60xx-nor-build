@@ -1343,6 +1343,14 @@ unsigned int get_dts_machid(unsigned int machid)
 {
 	switch (machid)
 	{
+#ifdef CONFIG_TARGET_IPQ6018_PHILIPS_LY1800
+		case MACH_TYPE_IPQ6018_SY_Y6010:
+			return MACH_TYPE_IPQ6018_PHILIPS_LY1800;
+#endif
+#ifdef CONFIG_TARGET_IPQ6018_SY_Y6010
+		case MACH_TYPE_IPQ6018_PHILIPS_LY1800:
+			return MACH_TYPE_IPQ6018_SY_Y6010;
+#endif
 		default:
 			return machid;
 	}
