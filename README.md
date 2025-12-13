@@ -4,14 +4,107 @@ u-boot-2016 源代码基于：https://github.com/gl-inet/uboot-ipq60xx
 
 ## 适配设备
 
-本项目已适配以下 IPQ60xx eMMC 机型：
+本项目已适配以下 IPQ60xx **NOR + eMMC** 机型：
 
+- 双渔 Y6010
+- 飞利浦 LY1800
+
+以下机型可硬改为 **NOR + eMMC**（未测试）：
 - 京东云太乙（RE-CS-07）
 - 京东云亚瑟（RE-SS-01）
 - 京东云雅典娜（RE-CS-02）
-- 连我 NN6000 V1（未测试）
+- 连我 NN6000 V1
 - 连我 NN6000 V2
 - 红米 AX5 JDCloud（RA50）
+
+## 机型说明
+
+NOR + eMMC 机型典型分区布局如下：
+
+NOR 分区表（双渔 Y6010）：
+```
+IPQ6018# smeminfo
+flash_type:             0x6
+flash_index:            0x0
+flash_chip_select:      0x0
+flash_block_size:       0x10000
+flash_density:          0x1000000
+flash_secondary_type:   0x5
+partition table offset: 0x0
+No.: Name             Attributes            Start             Size
+  0: 0:SBL1           0x0000ffff              0x0          0xc0000
+  1: 0:MIBIB          0x001040ff          0xc0000          0x10000
+  2: 0:BOOTCONFIG     0x001040ff          0xd0000          0x20000
+  3: 0:BOOTCONFIG1    0x001040ff          0xf0000          0x20000
+  4: 0:QSEE           0x0000ffff         0x110000         0x1a0000
+  5: 0:QSEE_1         0x0000ffff         0x2b0000         0x1a0000
+  6: 0:DEVCFG         0x0000ffff         0x450000          0x10000
+  7: 0:DEVCFG_1       0x0000ffff         0x460000          0x10000
+  8: 0:RPM            0x0000ffff         0x470000          0x40000
+  9: 0:RPM_1          0x0000ffff         0x4b0000          0x40000
+ 10: 0:CDT            0x0000ffff         0x4f0000          0x10000
+ 11: 0:CDT_1          0x0000ffff         0x500000          0x10000
+ 12: 0:APPSBLENV      0x0000ffff         0x510000          0x10000
+ 13: 0:APPSBL         0x0000ffff         0x520000          0xa0000
+ 14: 0:APPSBL_1       0x0000ffff         0x5c0000          0xa0000
+ 15: 0:ART            0x0000ffff         0x660000          0x40000
+```
+
+eMMC 分区表（双渔 Y6010）：
+```
+IPQ6018# mmc part
+
+Partition Map for MMC device 0  --   Partition Type: EFI
+
+Part    Start LBA       End LBA         Name
+        Attributes
+        Type GUID
+        Partition GUID
+  1     0x00000022      0x00003021      "0:HLOS"
+        attrs:  0x0000000000000000
+        type:   b51f2982-3ebe-46de-8721-ee641e1f9997
+        guid:   9798feca-7799-1058-4b69-854f5c698859
+  2     0x00003022      0x00006021      "0:HLOS_1"
+        attrs:  0x0000000000000000
+        type:   a71da577-7f81-4626-b4a2-e377f9174525
+        guid:   f3dbbfd8-8edc-fde3-91dd-a653b785d4ea
+  3     0x00006022      0x00024021      "rootfs"
+        attrs:  0x0000000000000000
+        type:   98d2248d-7140-449f-a954-39d67bd6c3b4
+        guid:   de1de159-cc70-db2d-c79e-41068975925c
+  4     0x00024022      0x00026021      "0:WIFIFW"
+        attrs:  0x0000000000000000
+        type:   5911fd72-35be-424e-975d-69c957ad3a43
+        guid:   55cb8126-e549-80c8-4d69-113675a44df1
+  5     0x00026022      0x00044021      "rootfs_1"
+        attrs:  0x0000000000000000
+        type:   5647b280-dc2a-485d-9913-cf53ac40fa32
+        guid:   d77ecb94-9116-eaea-f0da-ddaf5c296cf7
+  6     0x00044022      0x00046021      "0:WIFIFW_1"
+        attrs:  0x0000000000000000
+        type:   a640a4e3-6aeb-4d83-81a0-dfeae6b7d1a5
+        guid:   62e4e062-910d-8bfd-3fdd-af2aad4da687
+  7     0x00046022      0x000be021      "rootfs_data"
+        attrs:  0x0000000000000000
+        type:   ab1760da-a8bb-4d6f-98d2-9ad3ab9009cd
+        guid:   20ee14f5-5383-ce48-4d7e-a207d8ba7776
+  8     0x000be022      0x008be021      "app"
+        attrs:  0x0000000000000000
+        type:   ac176067-a1bc-4c8f-98d1-9bd3ab9011cd
+        guid:   7845e0f3-80b3-ae1c-866c-57d9fe68f690
+  9     0x008be022      0x0e2be021      "data1"
+        attrs:  0x0000000000000000
+        type:   ad1760ff-a2bd-4e8f-98d3-9cd3ab9022cd
+        guid:   6103e817-6117-d089-5243-eb51f9165c88
+ 10     0x0e2be022      0x0e2d79b9      "data2"
+        attrs:  0x0000000000000000
+        type:   ae1760cc-a3bf-536d-98d4-9dd3ab9033cd
+        guid:   39c6eebe-f67b-a61a-afd7-5d610d3ea40e
+ 11     0x0e2d79ba      0x0e6d79b9      "swap"
+        attrs:  0x0000000000000000
+        type:   af1760cc-a3bf-536d-98d4-9dd3ab9044cd
+        guid:   134e417f-570b-b302-14eb-46bb7f2f4716
+```
 
 ## 编译方法
 
@@ -30,7 +123,7 @@ sudo apt install -y build-essential device-tree-compiler
 2. 克隆此仓库
 
 ```bash
-git clone https://github.com/chenxin527/uboot-ipq60xx-emmc-build.git
+git clone https://github.com/chenxin527/uboot-ipq60xx-nor-build.git
 ```
 
 3. 编译你需要的设备
@@ -43,6 +136,8 @@ git clone https://github.com/chenxin527/uboot-ipq60xx-emmc-build.git
   setup_env               仅设置编译环境
   check_file_size <文件>  检查并调整文件大小至 640KB (655360 Bytes)
   clean_cache             清理编译过程中产生的缓存
+  build_ly1800            编译 Philips LY1800
+  build_y6010             编译 SY Y6010
   build_re-cs-02          编译 JDCloud AX6600 (Athena)
   build_re-cs-07          编译 JDCloud ER1
   build_re-ss-01          编译 JDCloud AX1800 Pro (Arthur)
@@ -62,7 +157,7 @@ Fork 本仓库后使用 GitHub Actions 云编译。
 
 日志文件：log-\${编译时间}.txt
 
-U-Boot 文件：uboot-ipq60xx-emmc-\${设备型号}-\${版本号}.bin
+U-Boot 文件：uboot-ipq60xx-nor-\${设备型号}-\${版本号}.bin
 
 U-Boot 截图示例（[点击此处](./screenshots.md) 查看所有网页截图）：
 
@@ -112,6 +207,12 @@ U-Boot 下不区分 LAN / WAN，任意网口均可进入 Web 刷机界面。
 按住 RESET / WPS / SCREEN 键后上电，等待 LED 闪烁 5 次后即可进入 U-Boot Web 刷机界面。
 
 ## 注意事项
+
+### 连我 NN6000 V1 的 U-Boot 未测试
+
+连我 NN6000 V1 的 U-Boot 未测试过，因为没有机器。
+
+V1 和 V2 的 U-Boot 只是网口配置不同，其他都一样。若发现 V1 U-Boot 不能正常使用，可刷写 V2 的 U-Boot 测试，看看每个网口是否能正常进 Web。每换一个网口都要断电并重新按 RESET / WPS 键启动 HTTP Server，不要在 HTTP Server 已经启动的时候换网口，这样是进不了 Web 的。
 
 ### bootipq 失败后执行 httpd 出错
 

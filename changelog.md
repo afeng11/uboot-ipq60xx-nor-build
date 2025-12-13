@@ -1,9 +1,11 @@
 ## 📋 更新日志
 
-### 📅 [xx.xx.xx](https://github.com/chenxin527/uboot-ipq60xx-emmc-build/releases/tag/)
+### 📅 [xx.xx.xx](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/)
 
 #### ✨ 功能更新
 
+- 添加对飞利浦 LY1800 和双渔 Y6010 的支持
+- 调整相关代码，适配 NOR + eMMC
 - 雅典娜支持通过 Screen 键启动 HTTP Server
 
 #### 🐛 BUG 修复
@@ -12,10 +14,10 @@
 
 #### 📢 其他更新
 
-- 修改 bootcmd 为 bootipq（[点击此处](https://github.com/chenxin527/uboot-ipq60xx-emmc-build/commit/b1682e34c931779f1f46ff4d210777e9b1256f1a) 查看详细说明）
+- 修改 bootcmd 为 bootipq（[点击此处](https://github.com/chenxin527/uboot-ipq60xx-nor-build/commit/b1682e34c931779f1f46ff4d210777e9b1256f1a) 查看详细说明）
 - 修改 smeminfo 命令的输出内容
 
-### 📅 [25.11.13](https://github.com/chenxin527/uboot-ipq60xx-emmc-build/releases/tag/25.11.13-22.43.36)
+### 📅 [25.11.13](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/25.11.13-22.43.36)
 
 #### ✨ 功能更新
 
@@ -33,7 +35,7 @@
 - 填充 U-Boot 至 640KB (655360 Bytes)
 - 将通过网页刷写的 U-Boot 大小限制调回 640KB
 
-### 📅 [25.11.03](https://github.com/chenxin527/uboot-ipq60xx-emmc-build/releases/tag/25.11.03-17.23.47)
+### 📅 [25.11.03](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/25.11.03-17.23.47)
 
 #### 🌐 网页更新
 
@@ -46,7 +48,7 @@
 
 - 填充 U-Boot 至 1024KB（1048576 Bytes）
 
-### 📅 [25.10.25](https://github.com/chenxin527/uboot-ipq60xx-emmc-build/releases/tag/25.10.25-15.18.56)
+### 📅 [25.10.25](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/25.10.25-15.18.56)
 
 #### ✨ 功能更新
 
@@ -56,7 +58,7 @@
 
 - 修改部分网页提示信息
 
-### 📅 [25.10.12](https://github.com/chenxin527/uboot-ipq60xx-emmc-build/releases/tag/25.10.12-14.44.11)
+### 📅 [25.10.12](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/25.10.12-14.44.11)
 
 #### ✨ 功能更新
 
@@ -71,7 +73,7 @@
 
 - 修改更新固件时的串口输出日志
 
-### 📅 [25.09.15](https://github.com/chenxin527/uboot-ipq60xx-emmc-build/releases/tag/25.09.15-23.49.18)
+### 📅 [25.09.15](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/25.09.15-23.49.18)
 
 #### ✨ 功能更新
 
