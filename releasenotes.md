@@ -39,6 +39,6 @@
 
 ## 📸 网页截图
 
-[点击此处](https://github.com/chenxin527/uboot-ipq60xx-nor-build/blob/5bda947116b50186274a11367528f257d4f52c56/screenshots.md) 查看所有网页截图。
+[点击此处](https://github.com/chenxin527/uboot-ipq60xx-nor-build/blob/bc12e88c60e0ba898e9c193ace3da5bdf4d4659d/screenshots.md) 查看所有网页截图。
 
 ![uboot-index-page](https://github.com/chenxin527/uboot-ipq60xx-nor-build/blob/42af5d1c143ea42dd02023db5bef45f56677674f/screenshots/uboot-index-page.png)
