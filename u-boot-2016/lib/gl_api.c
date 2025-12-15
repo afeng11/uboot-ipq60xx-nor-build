@@ -302,7 +302,7 @@ int check_fw_type(void *address){
 	else if (*sign_elf==0x464c457f)
 		return FW_TYPE_ELF;
 	else
-		return -1;
+		return FW_TYPE_UNKNOWN;
 }
 
 void print_fw_type(int fw_type) {
