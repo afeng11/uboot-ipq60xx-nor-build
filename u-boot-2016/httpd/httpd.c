@@ -633,7 +633,7 @@ void httpd_appcall(void){
 					httpd_download_progress();
 
 					// if we have collected all data
-					if(hs->upload >= hs->upload_total+strlen(boundary_value)+6){
+					if(hs->upload >= hs->upload_total + strlen(boundary_value) + 6) {
 						// 用 0xFF 填充内存中上传的文件后面的部分内存区域，防止干扰文件检查
 						memset((void *)webfailsafe_data_pointer, 0xFF, WEBFAILSAFE_UPLOAD_PADDING_SIZE_IN_BYTES);
 						// 检查上传的文件是否正确
@@ -700,7 +700,7 @@ void httpd_appcall(void){
 						net_boot_file_size = (ulong)hs->upload_total;
 
 						// which website will be returned
-						if(!webfailsafe_upload_failed){
+						if (!webfailsafe_upload_failed) {
 							fs_open(file_flashing_html.name, &fsfile);
 						} else {
 							fs_open(file_fail_html.name, &fsfile);
@@ -714,7 +714,6 @@ void httpd_appcall(void){
 
 						uip_send(hs->dataptr, (hs->upload > uip_mss() ? uip_mss() : hs->upload));
 					}
-
 				}
 
 				return;
