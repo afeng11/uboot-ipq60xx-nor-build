@@ -1,6 +1,6 @@
 ## 📋 更新日志
 
-### 📅 [xx.xx.xx](https://github.com/chenxin527/uboot-ipq60xx-nor-build/tags/)
+### 📅 [25.12.16-15.24.47](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/25.12.16-15.24.47)
 
 #### ✨ 功能更新
 
