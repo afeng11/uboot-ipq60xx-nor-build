@@ -128,60 +128,30 @@ int do_http_upgrade(const ulong size, const int upgrade_type) {
 				if (fw_type == FW_TYPE_FACTORY_KERNEL6M) {
 					printf("\n\n******************************\n* FACTORY FIRMWARE UPGRADING *\n* FIRMWARE KERNEL SIZE: 6MB  *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
 					sprintf(buf,
-						"mw 0x%lx 0x00 0x200 && "
 						"mmc dev 0 && flash 0:HLOS 0x%lx 0x%lx && flash rootfs 0x%lx 0x%lx && "
-						"sf probe 0 && sf read 0x%lx 0xd0000 0x150 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flashupdate 0:BOOTCONFIG 0x%lx 0x150 && flashupdate 0:BOOTCONFIG1 0x%lx 0x150",
-						// mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的 512 字节，防止文件不够 512 字节写入文件后其他字符到 eMMC
-						// 其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size),
+						"bootconfig set primary",
 						// factory.bin 由 kernel + rootfs 组成，其中 kernel 固定 6MB 大小
 						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 						(unsigned long int)0x600000,
 						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x600000),
-						(unsigned long int)(size-0x600000),
-						// 这部分改两个 BOOTCONFIG，启动系统 0，即 rootfs
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x94),
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xA8),
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+						(unsigned long int)(size-0x600000));
 				} else if (fw_type == FW_TYPE_FACTORY_KERNEL12M) {
 					printf("\n\n******************************\n* FACTORY FIRMWARE UPGRADING *\n* FIRMWARE KERNEL SIZE: 12MB *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
 					sprintf(buf,
-						"mw 0x%lx 0x00 0x200 && "
 						"mmc dev 0 && flash 0:HLOS 0x%lx 0x%lx && flash rootfs 0x%lx 0x%lx && "
-						"sf probe 0 && sf read 0x%lx 0xd0000 0x150 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flashupdate 0:BOOTCONFIG 0x%lx 0x150 && flashupdate 0:BOOTCONFIG1 0x%lx 0x150",
-						// mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的 512 字节，防止文件不够 512 字节写入文件后其他字符到 eMMC
-						// 其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size),
+						"bootconfig set primary",
 						// factory.bin 由 kernel + rootfs 组成，其中 kernel 固定 12MB 大小
 						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 						(unsigned long int)0xC00000,
 						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xC00000),
-						(unsigned long int)(size-0xC00000),
-						// 这部分改两个 BOOTCONFIG，启动系统 0，即 rootfs
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x94),
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xA8),
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+						(unsigned long int)(size-0xC00000));
 				} else if (fw_type == FW_TYPE_JDCLOUD) {
 					printf("\n\n*******************************\n* ORIGINAL FIRMWARE UPGRADING *\n*   DO NOT POWER OFF DEVICE!  *\n*******************************\n\n");
 					sprintf(buf,
 						"mmc dev 0 && imxtract 0x%lx hlos-0cc33b23252699d495d79a843032498bfa593aba && flash 0:HLOS $fileaddr $filesize && imxtract 0x%lx rootfs-f3c50b484767661151cfb641e2622703e45020fe && flash rootfs $fileaddr $filesize && imxtract 0x%lx wififw-45b62ade000c18bfeeb23ae30e5a6811eac05e2f && flash 0:WIFIFW $fileaddr $filesize && flasherase rootfs_data && "
-						"sf probe 0 && sf read 0x%lx 0xd0000 0x150 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flashupdate 0:BOOTCONFIG 0x%lx 0x150 && flashupdate 0:BOOTCONFIG1 0x%lx 0x150",
-						// 官方固件本身各个固件后面有填充 0，所以不用修改上传文件后的内存
+						"bootconfig set primary",
 						// 执行 imxtract 时不带目标地址，则不进行复制，但会修改环境变量 $fileaddr $filesize，可以直接用
 						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-						// 这部分改两个 BOOTCONFIG，启动系统 0，即 rootfs
-						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x94),
-						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xA8),
 						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
 				} else {
@@ -197,10 +167,10 @@ int do_http_upgrade(const ulong size, const int upgrade_type) {
 			printf("\n\n****************************\n*     U-BOOT UPGRADING     *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 			if (flash_type == SMEM_BOOT_NORPLUSEMMC || sfi->flash_type == SMEM_BOOT_SPI_FLASH) {
 				if (fw_type == FW_TYPE_ELF) {
-				sprintf(buf,
-					"sf probe 0 && flashupdate 0:APPSBL 0x%lx $filesize && flashupdate 0:APPSBL_1 0x%lx $filesize",
-					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS),
-					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
+					sprintf(buf,
+						"sf probe 0 && flashupdate 0:APPSBL 0x%lx $filesize && flashupdate 0:APPSBL_1 0x%lx $filesize",
+						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS),
+						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
 				} else {
 					printf("\n\n* The upload file is NOT supported UBOOT ELF!! *\n\n");
 					return (-1);
@@ -253,10 +223,10 @@ int do_http_upgrade(const ulong size, const int upgrade_type) {
 			printf("\n\n****************************\n*      CDT  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 			if (flash_type == SMEM_BOOT_NORPLUSEMMC || sfi->flash_type == SMEM_BOOT_SPI_FLASH) {
 				if (fw_type == FW_TYPE_CDT) {
-				sprintf(buf,
-					"sf probe 0 && flashupdate 0:CDT 0x%lx $filesize && flashupdate 0:CDT_1 0x%lx $filesize",
-					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS),
-					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
+					sprintf(buf,
+						"sf probe 0 && flashupdate 0:CDT 0x%lx $filesize && flashupdate 0:CDT_1 0x%lx $filesize",
+						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS),
+						(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
 				} else {
 					printf("\n\n* The upload file is NOT supported CDT!! *\n\n");
 					return (-1);
