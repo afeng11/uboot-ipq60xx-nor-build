@@ -4,24 +4,7 @@
 
 ### ✨ 功能更新
 
-- 添加对飞利浦 LY1800 和双渔 Y6010 的支持
-- 调整相关代码，适配 NOR + eMMC
-- 添加 flashupdate 命令
-- SPI Web 刷写命令改用 flashupdate（减少闪存磨损）
-- 支持刷写 eMMC 的 GPT 分区表或镜像，以及 SPI-NOR 的 MIBIB 分区表或镜像
-- 雅典娜支持通过 Screen 键启动 HTTP Server
-
-### 🐛 BUG 修复
-
-- 修复无法启动超过 30MB 的 uImage 的问题
-
-### 📢 其他更新
-
-- 修改 bootcmd 为 bootipq（[点击此处](https://github.com/chenxin527/uboot-ipq60xx-nor-build/commit/b1682e34c931779f1f46ff4d210777e9b1256f1a) 查看详细说明）
-- 修改 smeminfo 命令的输出内容
-- 针对 SPI-NOR 修改 CDT 大小限制为 64KB (65536 Bytes)
-- 检查上传的文件是否正确，不正确则返回 fail.html，并在串口控制台打印相关信息
-- 调整文件上传前填充的内存区域大小，文件上传完成后填充文件之后一定大小的内存区域
+- 添加 bootconfig 命令，用于切换启动分区
 
 ## 📡 支持设备
 
@@ -40,6 +23,6 @@
 
 ## 📸 网页截图
 
-[点击此处](https://github.com/chenxin527/uboot-ipq60xx-nor-build/blob/bc12e88c60e0ba898e9c193ace3da5bdf4d4659d/screenshots.md) 查看所有网页截图。
+[点击此处](https://github.com/chenxin527/uboot-ipq60xx-nor-build/blob/84f94c1376aca742ad031d6c37677e0922b17cb1/screenshots.md) 查看所有网页截图。
 
 ![uboot-index-page](https://github.com/chenxin527/uboot-ipq60xx-nor-build/blob/42af5d1c143ea42dd02023db5bef45f56677674f/screenshots/uboot-index-page.png)
