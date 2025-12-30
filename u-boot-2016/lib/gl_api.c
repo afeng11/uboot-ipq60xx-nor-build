@@ -336,7 +336,7 @@ int check_fw_compat(const int upgrade_type, const int fw_type, const ulong file_
 				print_fw_type(fw_type);
 				return 1;
 			} else if ((fw_type == FW_TYPE_MIBIB) && (file_size_in_bytes > WEBFAILSAFE_UPLOAD_MIBIB_SIZE_IN_BYTES_NOR)) {
-				printf("\n\n## Error: wrong file size, should be less than or equal to: %d bytes!", WEBFAILSAFE_UPLOAD_MIBIB_SIZE_IN_BYTES_NOR);
+				printf("\n\n## Error: wrong file size, mibib should be less than or equal to: %d bytes!", WEBFAILSAFE_UPLOAD_MIBIB_SIZE_IN_BYTES_NOR);
 				return 1;
 			}
 			break;
