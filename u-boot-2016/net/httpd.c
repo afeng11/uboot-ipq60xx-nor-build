@@ -197,20 +197,22 @@ int do_http_upgrade(const ulong size, const int upgrade_type) {
 			}
 			break;
 		case WEBFAILSAFE_UPGRADE_TYPE_IMG:
-			printf("\n\n****************************\n*      IMG  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 			if (flash_type == SMEM_BOOT_NORPLUSEMMC) {
 				if (fw_type == FW_TYPE_EMMC) {
+					printf("\n\n****************************\n*    EMMC IMG UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 					sprintf(buf,
 						"mmc erase 0x0 0x%lx && mmc write 0x%lx 0x0 0x%lx",
 						(unsigned long int)((size-1)/512+1),
 						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 						(unsigned long int)((size-1)/512+1));
 				} else if (fw_type == FW_TYPE_NOR) {
+					printf("\n\n****************************\n*   SPI-NOR IMG UPGRADING  *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 					sprintf(buf,
 						"sf probe 0 && sf update 0x%lx 0x0 0x%lx",
 						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 						(unsigned long int)(size));
 				} else if (fw_type == FW_TYPE_MIBIB) {
+					printf("\n\n****************************\n*      MIBIB UPGRADING     *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 					sprintf(buf,
 						"sf probe 0 && sf update 0x%lx 0xc0000 0x%lx",
 						(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
