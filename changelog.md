@@ -8,6 +8,7 @@
 - 添加 untar 命令，用于解析 sysupgrade tar image
 - 支持刷写 sysupgrade 格式的固件
 - 固件上传完成后检查其 kernel 与 rootfs 是否超过相应分区大小
+- 支持通过 DHCP 为客户端分配 IP（dhcpd 跟随 httpd 自动启动）
 
 #### 📢 其他更新
 
