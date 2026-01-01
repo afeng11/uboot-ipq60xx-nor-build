@@ -16,6 +16,7 @@
 - 调整上传文件大小错误时打印的日志内容
 - 不同类型的 IMG 更新打印不同的日志内容
 - 合并 NN6000 V1 & V2 的 U-Boot
+- 为打印的日志中的十六进制数添加 0x 前缀
 
 ### 📅 [25.12.16](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/25.12.16-15.24.47)
 
