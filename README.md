@@ -17,8 +17,7 @@ u-boot-2016 源代码基于：https://github.com/gl-inet/uboot-ipq60xx
 - 京东云太乙（RE-CS-07）
 - 京东云亚瑟（RE-SS-01）
 - 京东云雅典娜（RE-CS-02）
-- 连我 NN6000 V1
-- 连我 NN6000 V2
+- 连我 NN6000（V1 & V2）
 - 红米 AX5 JDCloud（RA50）
 
 ## 机型说明
@@ -145,8 +144,7 @@ git clone https://github.com/chenxin527/uboot-ipq60xx-nor-build.git
   build_re-cs-02          编译 JDCloud AX6600 (Athena)
   build_re-cs-07          编译 JDCloud ER1
   build_re-ss-01          编译 JDCloud AX1800 Pro (Arthur)
-  build_nn6000-v1         编译 Link NN6000 V1
-  build_nn6000-v2         编译 Link NN6000 V2
+  build_nn6000            编译 Link NN6000 (V1 & V2)
   build_ax5-jdcloud       编译 Redmi AX5 JDCloud
   build_all               编译所有支持的设备
 ```
@@ -175,7 +173,7 @@ U-Boot 截图示例（[点击此处](./screenshots.md) 查看所有网页截图�
 | 更新固件     | http://192.168.1.1             | 支持内核大小为 6MB / 12MB 的 factory / sysupgrade 格式的固件更新 |
 | 更新 ART    | http://192.168.1.1/art.html    | ART 包含路由器网卡 MAC 及无线校准数据 |
 | 更新 CDT    | http://192.168.1.1/cdt.html    | CDT 文件不得小于 10 KB（10240 Bytes） |
-| 更新 IMG    | http://192.168.1.1/img.html    | 支持刷写 eMMC 的 GPT 分区表或镜像，以及 SPI-NOR 的 MIBIB 分区表或镜像 |
+| 更新 IMG    | http://192.168.1.1/img.html    | 支持刷写 eMMC 的 GPT 分区表或完整镜像，以及 SPI-NOR 的 MIBIB 分区表或完整镜像 |
 | 更新 U-Boot | http://192.168.1.1/uboot.html  | U-Boot 大小不能超过 640 KB（655360 Bytes）|
 | 启动 uImage | http://192.168.1.1/uimage.html | Initramfs uImage，可直接上传至内存并启动 |
 
@@ -209,12 +207,13 @@ U-Boot 截图示例（[点击此处](./screenshots.md) 查看所有网页截图�
 
 - 京东云亚瑟（原厂叫 JOY 键）
 - 京东云雅典娜（原厂叫 JOY 键）
-- 连我 NN6000 V1（原厂叫 Reboot 键）
-- 连我 NN6000 V2（原厂叫 Reboot 键）
+- 连我 NN6000 (V1 & V2)（原厂叫 Reboot 键）
 
 此外，京东云雅典娜还支持通过 SCREEN 键进入 U-Boot Web 刷机界面。
 
 ### 其他
+
+**U-Boot 支持 DHCP，无需手动固定 IP（自 [26.01.02-15.33.27](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/26.01.02-15.33.27) 版本起）。** 访问 U-Boot Web 后台时不要将路由器与上级路由连接，以免上级路由 DHCP 干扰。
 
 U-Boot 下不区分 LAN / WAN，任意网口均可进入 Web 刷机界面。
 
@@ -226,7 +225,7 @@ U-Boot 下不区分 LAN / WAN，任意网口均可进入 Web 刷机界面。
 
 连我 NN6000 V1 的 U-Boot 未测试过，因为没有机器。
 
-V1 和 V2 的 U-Boot 只是网口配置不同，其他都一样。若发现 V1 的 U-Boot 不能正常使用，可刷写 V2 的 U-Boot 测试，看看每个网口是否能正常进 Web。每换一个网口都要断电并重新按 RESET / WPS 键启动 HTTP Server，不要在 HTTP Server 已经启动的时候换网口，这样是进不了 Web 的。
+V1 和 V2 的 U-Boot 只是网口配置不同，其他都一样。若发现 V1 的 U-Boot 不能正常使用，可刷写 V2 的 U-Boot 测试（自 [26.01.02-15.33.27](https://github.com/chenxin527/uboot-ipq60xx-nor-build/releases/tag/26.01.02-15.33.27) 版本起合并 V1 和 V2 的 U-Boot），看看每个网口是否能正常进 Web。每换一个网口都要断电并重新按 RESET / WPS 键启动 HTTP Server，不要在 HTTP Server 已经启动的时候换网口，这样是进不了 Web 的。
 
 ### bootipq 失败后执行 httpd 出错
 
