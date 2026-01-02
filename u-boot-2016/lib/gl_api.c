@@ -219,42 +219,43 @@ void print_fw_type(int fw_type) {
 	printf("* The upload file type: ");
 	switch (fw_type) {
 		case FW_TYPE_CDT:
-			printf("CDT *");
+			printf("CDT");
 			break;
 		case FW_TYPE_ELF:
-			printf("ELF *");
+			printf("ELF");
 			break;
 		case FW_TYPE_EMMC:
-			printf("EMMC IMAGE *");
+			printf("EMMC IMAGE");
 			break;
 		case FW_TYPE_FACTORY_KERNEL6M:
-			printf("FACTORY FIRMWARE (KERNEL SIZE: 6MB) *");
+			printf("FACTORY FIRMWARE (KERNEL SIZE: 6MB)");
 			break;
 		case FW_TYPE_FACTORY_KERNEL12M:
-			printf("FACTORY FIRMWARE (KERNEL SIZE: 12MB) *");
+			printf("FACTORY FIRMWARE (KERNEL SIZE: 12MB)");
 			break;
 		case FW_TYPE_FIT:
-			printf("FIT IMAGE *");
+			printf("FIT IMAGE");
 			break;
 		case FW_TYPE_MIBIB:
-			printf("MIBIB *");
+			printf("MIBIB");
 			break;
 		case FW_TYPE_NOR:
-			printf("SPI-NOR IMGAGE *");
+			printf("SPI-NOR IMGAGE");
 			break;
 		case FW_TYPE_JDCLOUD:
-			printf("JDCLOUD OFFICIAL FIRMWARE *");
+			printf("JDCLOUD OFFICIAL FIRMWARE");
 			break;
 		case FW_TYPE_SYSUPGRADE:
-			printf("SYSUPGRADE FIRMWARE *");
+			printf("SYSUPGRADE FIRMWARE");
 			break;
 		case FW_TYPE_UBI:
-			printf("UBI FIRMWARE *");
+			printf("UBI FIRMWARE");
 			break;
 		case FW_TYPE_UNKNOWN:
 		default:
-			printf("UNKNOWN *");
+			printf("UNKNOWN");
 	}
+	printf(" *");
 	return;
 }
 
